@@ -1,0 +1,222 @@
+// import { cn } from '@/utils/cn';
+// import {
+//   CheckCircleIcon,
+//   TrashIcon,
+//   PencilIcon,
+//   ArchiveBoxXMarkIcon,
+//   XMarkIcon,
+//   CheckIcon,
+// } from '@heroicons/react/24/outline';
+
+// import IconButton from '@/components/commons/IconButton';
+// import { useReducer } from 'react';
+
+// interface Todo {
+//   id: number;
+//   text: string;
+//   isComplete: boolean;
+// }
+
+// interface TodoListProps {
+//   list: Todo[];
+//   onUpdateTodo: (updatedTodo: Todo) => void;
+//   onDeleteTodo: (id: number) => void;
+//   onClearTodos: (todos: number[]) => void;
+// }
+
+// interface EditState {
+//   [id: number]: { text: string };
+// }
+
+// const initialState: EditState = {};
+
+// type Action =
+//   | { type: 'START_EDIT'; payload: { id: number; text: string } }
+//   | { type: 'CANCEL_EDIT'; payload: number }
+//   | { type: 'SET_TEXT'; payload: { id: number; text: string } }
+//   | { type: 'SAVE_EDIT'; payload: { id: number; text: string } };
+
+// const editReducer = (state: EditState, action: Action): EditState => {
+//   switch (action.type) {
+//     case 'START_EDIT':
+//       return { ...state, [action.payload.id]: { text: action.payload.text } };
+//     case 'CANCEL_EDIT': {
+//       const newState = { ...state };
+//       delete newState[action.payload]; // remove from edit state
+//       return newState;
+//     }
+//     case 'SET_TEXT':
+//       return { ...state, [action.payload.id]: { text: action.payload.text } };
+//     case 'SAVE_EDIT': {
+//       const newState = { ...state };
+//       delete newState[action.payload.id];
+//       return newState;
+//     }
+//     default:
+//       return state;
+//   }
+// };
+
+// const TodoList: React.FC<TodoListProps> = ({
+//   list,
+//   onUpdateTodo,
+//   onDeleteTodo,
+//   onClearTodos,
+// }) => {
+//   const [editState, dispatch] = useReducer(editReducer, initialState);
+
+//   const toggleComplete = (item: Todo) => {
+//     const updatedData = { ...item, isComplete: !item.isComplete };
+//     console.log(updatedData);
+//     onUpdateTodo({ ...item, isComplete: !item.isComplete });
+//   };
+
+//   const startEditTodo = (item: Todo) => {
+//     dispatch({ type: 'START_EDIT', payload: { id: item.id, text: item.text } });
+//   };
+
+//   const cancelEditTodo = (id: number) => {
+//     dispatch({ type: 'CANCEL_EDIT', payload: id });
+//   };
+
+//   const saveEditTodo = (item: Todo) => {
+//     if (editState[item.id]?.text.trim() !== '') {
+//       onUpdateTodo({ ...item, text: editState[item.id].text });
+//     }
+//     dispatch({
+//       type: 'SAVE_EDIT',
+//       payload: { id: item.id, text: editState[item.id].text },
+//     });
+//   };
+
+//   const removeEditTodo = (item: Todo) => {
+//     onDeleteTodo(item.id);
+//   };
+
+//   const clearCompleted = () => {
+//     const completedTodos = list
+//       .filter((item) => item.isComplete)
+//       .map((item) => item.id);
+
+//     onClearTodos(completedTodos);
+//   };
+
+//   const hasCompletedTodos = list?.some((item) => item.isComplete);
+
+//   return (
+//     <>
+//       {!list ? (
+//         <div className="transition ease-linear h-80 grid place-content-center ">
+//           <div className="text-slate-500">Empty todo list</div>
+//         </div>
+//       ) : (
+//         <div className="transition easy-linear  mx-auto w-5/6 h-[70%] my-2 rounded-2xl bg-cs-primary px-2">
+//           <div className="h-[85%] overflow-hidden overflow-y-auto">
+//             {list?.map((item) => {
+//               const isEditing = !!editState[item.id];
+//               const isEmpty = editState[item.id]?.text.trim() == '';
+
+//               return (
+//                 <div
+//                   key={item.id}
+//                   className="flex justify-center items-center py-4 px-3"
+//                 >
+//                   <button
+//                     disabled={isEditing}
+//                     className={cn(
+//                       'rounded-full border-none hover:opacity-50',
+//                       isEditing
+//                         ? 'hover:cursor-not-allowed'
+//                         : 'hover:cursor-pointer'
+//                     )}
+//                     onClick={() => toggleComplete(item)}
+//                   >
+//                     {item.isComplete ? (
+//                       <CheckCircleIcon className="size-8 text-orange-600" />
+//                     ) : (
+//                       <div className="w-6 h-6 m-1 flex justify-center rounded-full border-2 border-gray-500"></div>
+//                     )}
+//                   </button>
+//                   <div className="w-full relative mx-1">
+//                     <input
+//                       name="text"
+//                       readOnly={!isEditing}
+//                       type="text"
+//                       placeholder="Type here"
+//                       className={cn(
+//                         'w-full px-3 py-2 mx-3 my-2',
+//                         isEditing
+//                           ? 'rounded-md focus:outline-none focus:outline-1 focus:outline-black'
+//                           : 'bg-inherit border-b-2 border-gray-300 focus:outline-none',
+//                         item.isComplete &&
+//                           !isEditing &&
+//                           'line-through text-gray-400 ',
+//                         !isEditing && 'pointer-events-none'
+//                       )}
+//                       value={isEditing ? editState[item.id].text : item.text}
+//                       onChange={(e) =>
+//                         dispatch({
+//                           type: 'SET_TEXT',
+//                           payload: { id: item.id, text: e.target.value },
+//                         })
+//                       }
+//                     />
+//                     {isEmpty && (
+//                       <div className="absolute left-5 text-sm text-red-700">
+//                         Input is required
+//                       </div>
+//                     )}
+//                   </div>
+//                   <div className="mx-3 flex">
+//                     {isEditing ? (
+//                       <>
+//                         {/* Cancel Edit */}
+//                         <IconButton onClick={() => cancelEditTodo(item.id)}>
+//                           <XMarkIcon className="size-6 text-red-700" />
+//                         </IconButton>
+//                         {/* Save Edit */}
+//                         <IconButton
+//                           disabled={editState[item.id].text.trim() == ''}
+//                           onClick={() => saveEditTodo(item)}
+//                         >
+//                           <CheckIcon className="size-6 text-green-700" />
+//                         </IconButton>
+//                       </>
+//                     ) : (
+//                       <>
+//                         {/* Enable Edit Mode */}
+//                         <IconButton onClick={() => startEditTodo(item)}>
+//                           <PencilIcon className="size-6" />
+//                         </IconButton>
+//                         {/* Delete */}
+//                         <IconButton onClick={() => removeEditTodo(item)}>
+//                           <TrashIcon className="size-6 text-red-700" />
+//                         </IconButton>
+//                       </>
+//                     )}
+//                   </div>
+//                 </div>
+//               );
+//             })}
+//           </div>
+
+//           <div className="flex justify-end p-4">
+//             {hasCompletedTodos && (
+//               <IconButton
+//                 className="flex items-center w-100 text-orange-600"
+//                 onClick={clearCompleted}
+//               >
+//                 <div>
+//                   <ArchiveBoxXMarkIcon className="size-6"></ArchiveBoxXMarkIcon>
+//                 </div>
+//                 <div>Clear Completed</div>
+//               </IconButton>
+//             )}
+//           </div>
+//         </div>
+//       )}
+//     </>
+//   );
+// };
+
+// export default TodoList;
