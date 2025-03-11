@@ -137,25 +137,22 @@ const TodoList: React.FC<TodoListProps> = ({
                   <div className="mx-3 flex">
                     {isEditing ? (
                       <>
-                        {/* Cancel Edit */}
-                        <IconButton onClick={() => cancelEditTodo(item.id)}>
-                          <XMarkIcon className="size-6 text-red-700" />
-                        </IconButton>
-                        {/* Save Edit */}
                         <IconButton
                           disabled={isEmpty}
                           onClick={() => saveEditTodo(item)}
                         >
                           <CheckIcon className="size-6 text-green-700" />
                         </IconButton>
+                        <IconButton onClick={() => cancelEditTodo(item.id)}>
+                          <XMarkIcon className="size-6 text-red-700" />
+                        </IconButton>
                       </>
                     ) : (
                       <>
-                        {/* Enable Edit Mode */}
                         <IconButton onClick={() => startEditTodo(item)}>
                           <PencilIcon className="size-6" />
                         </IconButton>
-                        {/* Delete */}
+
                         <IconButton onClick={() => removeEditTodo(item.id)}>
                           <TrashIcon className="size-6 text-red-700" />
                         </IconButton>
