@@ -1,5 +1,5 @@
 Local Setup:
 
-cp .env.example .env
-npm install
-npm run dev
+- cp .env.example .env
+- npm install
+- npm run dev
